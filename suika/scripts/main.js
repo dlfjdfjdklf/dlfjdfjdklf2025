@@ -1,10 +1,13 @@
+// 이미지 및 반지름  추가
+import { FRUITS } from "./fruits.js";
+
 // 모듈 불러오기
 
 var Engine = Matter.Engine,
     Render = Matter. Render,
     Runner = Matter.Runner, 
     Bodies = Matter.Bodies,
-    World = Matter.World;
+    World = Matter.World; 
 
     // 엔진 선언
     const engine = Engine.create();
@@ -46,7 +49,7 @@ var Engine = Matter.Engine,
 
     const topLine = Bodies.rectangle(310, 150, 620, 2,{
         // x좌표, y좌표, width, heigh
-    isStatic: false,
+    isStatic: true,
     render: {fillStyle: '#E6B143'} 
     })
                         
@@ -56,4 +59,22 @@ var Engine = Matter.Engine,
     //실행
     Render.run(render);
     Runner.run(engine);
-    Runner.run(render, engine)
+    
+
+    // 과일을 추가하는 함수
+    function addFruit() {
+
+        const fruis = FRUITS[0];
+        const body = Bodies.circle(300, 50, fruti.radius,
+            {
+                render: {
+                    sprite: {texture: '${fruit.name}. png' }
+                }
+            } );
+
+            //월드에 배치
+            World.add(world, body);
+    }
+
+    // 함수 호출
+    addFruit();
