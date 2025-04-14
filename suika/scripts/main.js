@@ -203,6 +203,14 @@ Events.on(engine, "collisionStart", (event) => {
 
             // 새로 만든 과일 추가
             World.add(world, newBody);
+
+            // 게임 승리 조건
+            if(newBody.index === 9) {
+                setTimeout(() => {
+                    alert("You made Whatermelon!\nCongratulation")
+                    disableAction = true;
+                }, 1000)
+            }
         }
 
         // 게임 종료 조건 이벤트 생성
