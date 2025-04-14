@@ -53,12 +53,14 @@ render: {fillStyle: '#E6B143'}
 })
 
 const topLine = Bodies.rectangle(310, 150, 620, 2,{
-    // x좌표, y좌표, width, heigh
-isStatic: true,
-// 센서 감지 기능(충돌은 안함)
-isSensor: true,
-render: {fillStyle: '#E6B143'} 
-})
+                                // x좌표, y좌표, width, heigh
+    // 이벤트 처리를 위해 이름 지정
+    name : "topLine",
+    isStatic: true,
+    // 센서 감지 기능(충돌은 안함)
+    isSensor: true,
+    render: {fillStyle: '#E6B143'} 
+    })
                     
 // 생성한 벽을 월드에 배치
 World.add(world, [leftWall, rightWall, ground, topLine]);
@@ -73,6 +75,9 @@ let currentFruit = null;
 
 // 키 조작을 제어하는 변수
 let disableAction = false;
+
+//키 제어 변수 생성
+let interval = null;
 
 
 // 과일을 추가하는 함수
@@ -113,16 +118,32 @@ window.onkeydown = (event)  => {
 
     switch(event.code) {
         case "KeyA":
-           Body.setPosition(currentBody, {
-            x: currentBody.position.x - 10,
-            y: currentBody.position.y
-           })
+             
+        // 한번 누르면 계속 작동하는걸 제어하기 위한 if문
+             if(interval)
+                 return;
+              // 인터벌 변수 사용, 밀리초 단위로 함수를 반복
+              interval = setInterval(() => {
+                if(currentBody.position.x - currentFruit.radius > 30) {
+                    Body.setPosition(currentBody, {
+                        x: currentBody.position.x - 1,
+                        y: currentBody.position.y
+              })
+            }
+           }, 5);
             break;
         case "KeyD":
-            Body.setPosition(currentBody, {
-                x: currentBody.position.x  + 10,
-                y: currentBody.position.y,
-            })
+            if (interval)
+                return;
+
+                interval = setInterval(() => {
+                    if(currentBody.position.x - currentFruit.radius < 590) {
+                        Body.setPosition(currentBody, {
+                            x: currentBody.position.x + 1,
+                            y: currentBody.position.y
+                  })
+                }
+               }, 5);
             break;
 
         case "KeyS":
@@ -137,6 +158,16 @@ window.onkeydown = (event)  => {
             break;
     }
     
+}
+
+//인터벌 제어\
+window.onkeyup = (event) => {
+    switch(event.code) {
+        case "KeyA":
+        case "KeyD":
+        clearInterval(interval);
+        interval = null;
+    }
 }
 
 Events.on(engine, "collisionStart", (event) => {
@@ -172,6 +203,12 @@ Events.on(engine, "collisionStart", (event) => {
 
             // 새로 만든 과일 추가
             World.add(world, newBody);
+        }
+
+        // 게임 종료 조건 이벤트 생성
+        if( !disableAction && (collision.bodyA.name === "topLine" || collision.bodyB.name === "topLine" ) ) {
+            alert("Game Over");
+            disableAction == true;
         }
     })
 })
